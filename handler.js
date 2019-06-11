@@ -35,8 +35,6 @@ module.exports.newCheapFlight = async (event, context, callback) => {
 };
 
 const sendToSlack = (parsed) => {
-  console.log('parsed email html: ', parsed.html);
-  console.log('parsed as textAsHtml', parsed.textAsHtml);
 
   // lots of formatting here, I suck at regex so if someone else wants to take a stab go for it
   const fromRegex = /<p style="padding:0!important;margin:0!important;margin-bottom:0!important">(.*?)<\/p>/g
