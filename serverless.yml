@@ -12,7 +12,7 @@ provider:
   name: aws
   runtime: nodejs10.x
   environment: 
-    SLACK_URL: "https://hooks.slack.com/services/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"
+    SLACK_URL: "-"
 
 # The `functions` block defines what code to deploy
 functions:
