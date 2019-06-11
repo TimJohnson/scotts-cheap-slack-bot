@@ -35,22 +35,28 @@ module.exports.newCheapFlight = async (event, context, callback) => {
 };
 
 const sendToSlack = (parsed) => {
+  console.log('parsed email html: ', parsed.html);
+  console.log('parsed as textAsHtml', parsed.textAsHtml);
 
   // lots of formatting here, I suck at regex so if someone else wants to take a stab go for it
-  const fromRegex = /<p style="padding: 0 !important; margin: 0 !important; margin-bottom: 0 !important;">(.*)/g
-  const imageTag = /Full Width Image(.*)<!-- END Full Width Image -->/g
+  const fromRegex = /<p style="padding:0!important;margin:0!important;margin-bottom:0!important">(.*?)<\/p>/g
+
+  const imageTag = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig
+  const destationImage = parsed.html.match(imageTag).find(l => l.includes('cloudfront.net/deals'));
 
   const from = parsed.html.match(fromRegex)
-  const image = parsed.html.match(imageTag)[0].match(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig)[0];
 
-  const cities = from.map(f =>  f.replace('<p style="padding: 0 !important; margin: 0 !important; margin-bottom: 0 !important;">', '')
-      .replace('</p>', '')
-      .replace('<strong style="text-decoration: underline;">', '')
-      .replace('</strong>', ''));
+  const cities = from.map(f =>  f.replace('<p style="padding:0!important;margin:0!important;margin-bottom:0!important">', '').replace('</p>', '').replace('<strong style="text-decoration:underline">', '').replace('</strong>', ''));
   
   const formattedSubject = parsed.subject.replace('Fwd: ', '');
   
-  const formattedCities = cities.map(f => (f.startsWith("TO:") || f.startsWith('FROM:')) ? `*${f}*` : `>${f}`).join('\r\n');
+  let formattedCities = cities.map(f => (f.startsWith('  TO:') || f.startsWith('  FROM:')) ? `*${f.replace(/\s/g, '')}*` : `>${f}`);
+
+  if (formattedCities[formattedCities.length - 1].startsWith('>*')) {
+    formattedCities[formattedCities.length - 1] = formattedCities[formattedCities.length - 1].substr(1);
+  }
+  
+  formattedCities = formattedCities.join('\r\n');
 
   const data = {
     text: formattedSubject,
@@ -74,7 +80,7 @@ const sendToSlack = (parsed) => {
           },
           accessory: {
             type: 'image',
-            image_url: image,
+            image_url: destationImage,
             alt_text: formattedSubject
           }
       },
