@@ -40,9 +40,9 @@ const sendToSlack = (parsed) => {
   const fromRegex = /<p style="padding: 0 !important; margin: 0 !important; margin-bottom: 0 !important;"> (.*?) <\/p> /g
 
   const imageTag = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig
-  const destinationImage = html.match(imageTag).find(l => l.includes('cloudfront.net/deals'));
+  const destinationImage = parsed.html.match(imageTag).find(l => l.includes('cloudfront.net/deals'));
 
-  const from = html.match(fromRegex);
+  const from = parsed.html.match(fromRegex);
 
   const cities = from.map(f =>  f.replace('<p style="padding: 0 !important; margin: 0 !important; margin-bottom: 0 !important;">', '').replace('</p>', '').replace(/<strong (.*?)>/, '').replace('</strong>', ''));
   
