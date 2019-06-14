@@ -48,7 +48,7 @@ const sendToSlack = (parsed) => {
   
   const formattedSubject = parsed.subject.replace('Fwd: ', '');
   
-  let formattedCities = cities.map(f => (f.startsWith('  TO:') || f.startsWith('FROM:')) ? `*${f.replace(/\s/g, '')}*` : `>${f}`);
+  let formattedCities = cities.map(f => (f.startsWith('  TO:') || f.startsWith('  FROM:')) ? `*${f.replace(/\s/g, '')}*` : `>${f}`);
 
   if (formattedCities[formattedCities.length - 1].startsWith('>*')) {
     formattedCities[formattedCities.length - 1] = formattedCities[formattedCities.length - 1].substr(1);
